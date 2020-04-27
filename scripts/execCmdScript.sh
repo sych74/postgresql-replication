@@ -30,14 +30,14 @@ if [ "${1}" == "slave" ]; then
     sed -i "s|.*archive_command.*| archive_command = 'cd .'|g" ${PGSQL_DATA}/postgresql.conf;
     major=$(psql --version | cut -d' ' -f3 | cut -d'.' -f1)
     [ "$major" -lt "12" ] && {
-	  sed -i "s|.*max_wal_senders.*|max_wal_senders = 1|g" ${PGSQL_DATA}/postgresql.conf;
+      sed -i "s|.*max_wal_senders.*|max_wal_senders = 1|g" ${PGSQL_DATA}/postgresql.conf;
       echo "standby_mode = on" > ${PGSQL_DATA}/recovery.conf;
       echo "primary_conninfo = 'host=${MASTER_IP} port=5432 user=replication password=${DB_PASSWORD}'" >> ${PGSQL_DATA}/recovery.conf;
       echo "trigger_file = '/tmp/postgresql.trigger.5432'" >> ${PGSQL_DATA}/recovery.conf;
     } || {
-	  sed -i "s|.*max_wal_senders.*|max_wal_senders = 8|g" ${PGSQL_DATA}/postgresql.conf;
+      sed -i "s|.*max_wal_senders.*|max_wal_senders = 8|g" ${PGSQL_DATA}/postgresql.conf;
       echo "primary_conninfo = 'host=${MASTER_IP} port=5432 user=replication password=${DB_PASSWORD}'" >> ${PGSQL_DATA}/postgresql.conf;
-      echo "promote_trigger_file = '/tmp/postgresql.trigger.5432'" >> ${PGSQL_DATA}/recovery.conf;
+      echo "promote_trigger_file = '/tmp/postgresql.trigger.5432'" >> ${PGSQL_DATA}/postgresql.conf;
       touch ${PGSQL_DATA}/standby.signal 
     }
     sudo /etc/init.d/postgresql start
