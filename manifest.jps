@@ -1,6 +1,6 @@
 type: install
 id: postgres-master-slave
-baseUrl: https://raw.githubusercontent.com/jelastic-jps/postgresql-replication/master
+baseUrl: https://raw.githubusercontent.com/sych74/postgresql-replication/master
 homepage: http://docs.jelastic.com/postgresql-database-replication
 logo: /images/postgres-70x70.png
 name: PostgreSQL Master-Slave Cluster
@@ -20,11 +20,15 @@ settings:
     name: nodeType
     type: list    
     values: 
-      postgres9: PostgreSQL 9
-      postgres10: PostgreSQL 10
-      postgres11: PostgreSQL 11
-      #postgres12: PostgreSQL 12
-    default: postgres11
+      - value: postgres9
+        caption: PostgreSQL 9
+      - value: postgres10
+        caption: PostgreSQL 10
+      - value: postgres11
+        caption: PostgreSQL 11
+      - value: postgres12
+        caption: PostgreSQL 12
+    default: postgres12
 
 nodes:
   cloudlets: 8
@@ -32,10 +36,6 @@ nodes:
   nodeType: ${settings.nodeType}
 
 skipNodeEmails: true
-
-onBeforeResetNodePassword[sqldb]:
-  - resetPassword
-  - stopEvent
 
 onInstall: init
 
@@ -51,16 +51,12 @@ actions:
               sId: ${@i.id}
               sIP: ${@i.address}          
     - cmd [${globals.mId}]: |-
-        wget "${baseUrl}/scripts/execCmdScript.sh" -O /var/lib/pgsql/script.sh 2>&1
-        bash -x /var/lib/pgsql/script.sh master ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} 1>> /var/log/run.log 2>> /var/log/run.log
+        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
+        bash -x /var/lib/pgsql/jcm master ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
     - cmd [${globals.sId}]: |-
-        wget "${baseUrl}/scripts/execCmdScript.sh" -O /var/lib/pgsql/script.sh 2>&1
-        bash -x /var/lib/pgsql/script.sh slave ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} 1>> /var/log/run.log 2>> /var/log/run.log
-    
-  resetPassword:
-    script: /scripts/resetNodePassword.js
+        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
+        bash -x /var/lib/pgsql/jcm slave ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
   
-
 startPage: ${nodes.sqldb.master.url}
 success: |
   **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
