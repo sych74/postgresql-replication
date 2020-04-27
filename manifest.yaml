@@ -34,31 +34,19 @@ nodes:
   cloudlets: 8
   count: 2
   nodeType: ${settings.nodeType}
+  env:
+    ON_ENV_INSTALL: ${baseUrl}/addons/auto-cluster.yaml
 
 skipNodeEmails: true
-
-onInstall: init
-
-actions:
-  init:
-    - forEach(nodes.sqldb):
-        - if (${@i.id} == ${nodes.sqldb.master.id}): 
-            setGlobals:
-              mId: ${@i.id}
-              mIP: ${@i.address}
-        - else: 
-            setGlobals:
-              sId: ${@i.id}
-              sIP: ${@i.address}          
-    - cmd [${globals.mId}]: |-
-        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
-        bash -x /var/lib/pgsql/jcm master ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
-    - cmd [${globals.sId}]: |-
-        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
-        bash -x /var/lib/pgsql/jcm slave ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
   
 startPage: ${nodes.sqldb.master.url}
-success: |
-  **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
-  **User**: webadmin  
-  **Password**: ${nodes.sqldb.password}  
+success: 
+  email: false
+  text: |
+    **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
+    **User**: webadmin  
+    **Password**: ${nodes.sqldb.password}  
+
+    * [Database Replication with PostgreSQL](https://docs.jelastic.com/postgresql-database-replication/)
+    * [Remote Access to PostgreSQL](https://docs.jelastic.com/remote-access-postgres/)
+    * [Import and Export Dump to PostgreSQL](https://docs.jelastic.com/dump-postgres/)
