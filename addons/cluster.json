@@ -1,0 +1,20 @@
+{
+    "jps": "https://raw.githubusercontent.com/sych74/postgresql-replication/master/addons/auto-cluster.yaml",
+    "defaultState": false,
+    "skipOnEnvInstall": true,
+    "nodeGroupData": {
+        "scalingMode": "STATELESS",
+        "skipNodeEmails": true,
+        "isRedeploySupport": true
+    },
+    "validation": {
+        "minCount": 2,
+        "maxCount": 2,
+        "minCloudlets": 4,
+        "scalingMode": "STATELESS"
+    },
+    "recommended": {
+        "cloudlets": 32
+    },
+    "description": "PostgreSQL Database Replication"
+}
