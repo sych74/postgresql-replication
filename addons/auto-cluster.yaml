@@ -12,6 +12,7 @@ onInstall: init
 
 actions:
   init:
+    - log: ${placeholders}
     - forEach(nodes.sqldb):
         - if (${@i.id} == ${nodes.sqldb.master.id}): 
             setGlobals:
