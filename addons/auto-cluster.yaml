@@ -28,14 +28,14 @@ actions:
     - setGlobals: 
         pswd: ${response.out}
     - cmd [${globals.sId}]: |-
-        jcm setPswd ${globals.pswd} true
+        jcm setPswd ${globals.pswd}
         jcm initSlave &>> /var/log/run.log
 
 startPage: ${nodes.sqldb.master.url}
 success: |
   **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
   **User**: webadmin  
-  **Password**: ${nodes.sqldb.password}  
+  **Password**: ${globals.pswd}  
 
   * [Database Replication with PostgreSQL](https://docs.jelastic.com/postgresql-database-replication/)
   * [Remote Access to PostgreSQL](https://docs.jelastic.com/remote-access-postgres/)
