@@ -17,17 +17,14 @@ actions:
         - if (${@i.id} == ${nodes.sqldb.master.id}): 
             setGlobals:
               mId: ${@i.id}
-              mIP: ${@i.address}
         - else: 
             setGlobals:
               sId: ${@i.id}
               sIP: ${@i.address}          
     - cmd [${globals.mId}]: |-
-        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
-        bash -x /var/lib/pgsql/jcm master ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
+        jcm initMaster ${globals.sIP} &>> /var/log/run.log
     - cmd [${globals.sId}]: |-
-        wget "${baseUrl}/scripts/jcm" -O /var/lib/pgsql/jcm 2>&1
-        bash -x /var/lib/pgsql/jcm slave ${globals.sIP} ${nodes.sqldb.password} ${globals.mIP} &>> /var/log/run.log
+        jcm initSlave &>> /var/log/run.log
   
 startPage: ${nodes.sqldb.master.url}
 success: |
