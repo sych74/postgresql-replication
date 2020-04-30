@@ -24,6 +24,9 @@ actions:
               sIP: ${@i.address}          
     - cmd [${globals.mId}]: |-
         jcm initMaster ${globals.sIP} &>> /var/log/run.log
+        jcm getPswd
+    - setGlobals: 
+        pswd: ${response.out}
     - cmd [${globals.sId}]: |-
         jcm setPswd ${globals.pswd} true
         jcm initSlave &>> /var/log/run.log
