@@ -12,7 +12,8 @@ onInstall: init
 
 actions:
   init:
-    - log: ${placeholders}
+    - env.control.AddContainerEnvVars[sqldb]:
+        vars: {"KEY_PASS":"${fn.password}"}
     - forEach(nodes.sqldb):
         - if (${@i.id} == ${nodes.sqldb.master.id}): 
             setGlobals:
@@ -24,8 +25,9 @@ actions:
     - cmd [${globals.mId}]: |-
         jcm initMaster ${globals.sIP} &>> /var/log/run.log
     - cmd [${globals.sId}]: |-
+        jcm setPswd ${globals.pswd} true
         jcm initSlave &>> /var/log/run.log
-  
+
 startPage: ${nodes.sqldb.master.url}
 success: |
   **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
