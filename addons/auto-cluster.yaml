@@ -20,8 +20,8 @@ onAfterClone:
 
 actions:
   init:
-    - env.control.AddContainerEnvVars[sqldb]:
-        vars: {"KEY_PASS":"${fn.password}"}
+    #- env.control.AddContainerEnvVars[sqldb]:
+    #    vars: {"KEY_PASS":"${fn.password}"}
     - forEach(nodes.sqldb):
         - if (${@i.id} == ${nodes.sqldb.master.id}): 
             setGlobals:
