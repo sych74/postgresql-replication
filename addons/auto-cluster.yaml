@@ -30,22 +30,20 @@ actions:
         - if (${@i.id} == ${nodes.sqldb.master.id}): 
             setGlobals:
               mId: ${@i.id}
-              mIP: ${@i.address}          
         - else: 
             setGlobals:
               sId: ${@i.id}
-              sIP: ${@i.address}          
     - if (${settings.clone:false} || ${this.update:false}):
           setGlobals:
             cmd: updateReplicaHost    
     - cmd [${globals.mId}]: |-
-        jcm ${globals.cmd:initMaster} ${globals.sIP} &>> /var/log/run.log
+        jcm ${globals.cmd:initMaster} node${globals.sId} &>> /var/log/run.log
         jcm getPswd
     - setGlobals: 
         pswd: ${response.out}
     - cmd [${globals.sId}]: |-
         jcm setPswd ${globals.pswd}
-        jcm ${globals.cmd:initSlave} ${globals.mIP} &>> /var/log/run.log
+        jcm ${globals.cmd:initSlave} node${globals.mId} &>> /var/log/run.log
 
 startPage: ${nodes.sqldb.master.url}
 success: |
