@@ -31,7 +31,7 @@ actions:
             setGlobals:
               sId: ${@i.id}
               sIP: ${@i.address}          
-    - if (${setting.clone:false}):
+    - if (${settings.clone:false}):
           setGlobals:
             cmd: updateReplicaHost    
     - cmd [${globals.mId}]: |-
