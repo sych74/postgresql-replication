@@ -18,6 +18,10 @@ onAfterClone:
       nodeGroup: ${settings.nodeGroup}      
       clone: true    
 
+onAfterMigrate:
+  init: 
+    update: true
+
 actions:
   init:
     #- env.control.AddContainerEnvVars[sqldb]:
@@ -31,7 +35,7 @@ actions:
             setGlobals:
               sId: ${@i.id}
               sIP: ${@i.address}          
-    - if (${settings.clone:false}):
+    - if (${settings.clone:false} || ${this.update:false}):
           setGlobals:
             cmd: updateReplicaHost    
     - cmd [${globals.mId}]: |-
