@@ -10,7 +10,6 @@
     },
     "validation": {
         "minCount": 2,
-        "maxCount": 2,
         "minCloudlets": 4,
         "scalingMode": "STATELESS"
     },
