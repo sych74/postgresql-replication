@@ -7,6 +7,7 @@
         "skipNodeEmails": true,
         "isRedeploySupport": true
     },
+    "isResetServicePassword": "NODEGROUP",
     "validation": {
         "minCount": 2,
         "maxCount": 2,
