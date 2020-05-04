@@ -5,9 +5,9 @@
     "nodeGroupData": {
         "scalingMode": "STATELESS",
         "skipNodeEmails": true,
-        "isRedeploySupport": true
+        "isRedeploySupport": true,
+        "isResetServicePassword": "NODEGROUP"
     },
-    "isResetServicePassword": "NODEGROUP",
     "validation": {
         "minCount": 2,
         "maxCount": 2,
