@@ -14,6 +14,7 @@ onAfterScaleOut[sqldb]:
   - getPswd
   - forEach(event.response.nodes):
       initSlave: 
+        id: ${@i.id}      
         ip: ${@i.address}
 
 onAfterClone:
@@ -46,6 +47,7 @@ actions:
       - forEach(nodes.sqldb):
           - if (${@i.id} != ${nodes.sqldb.master.id}): 
             initSlave: 
+              id: ${@i.id}
               ip: ${@i.address}
     
   getPswd:
@@ -59,7 +61,7 @@ actions:
     - cmd[${nodes.sqldb.master.id}]: |-
         jcm addReplicaHost ${this.ip} &>> /var/log/run.log
         sudo jem service reload
-    - cmd[${@i.id}]: |-
+    - cmd[${this.id}]: |-
         jcm setPswd ${globals.pswd}
         jcm initSlave ${nodes.sqldb.master.address} &>> /var/log/run.log
     
