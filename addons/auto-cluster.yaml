@@ -34,8 +34,7 @@ actions:
     #- env.control.AddContainerEnvVars[sqldb]:
     #    vars: {"KEY_PASS":"${fn.password}"}
     - if (${settings.clone:false} || ${this.update:false}):
-      - cmd[${nodes.sqldb.master.id}]: |-
-          jcm clearReplicaHosts
+      - cmd[${nodes.sqldb.master.id}]: jcm removeAllReplicaHosts
       - forEach(nodes.sqldb):
           - if (${@i.id} != ${nodes.sqldb.master.id}): 
             - cmd[${nodes.sqldb.master.id}]: |-
