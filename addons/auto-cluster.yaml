@@ -67,9 +67,10 @@ actions:
         jcm addReplicaHost ${this.ip} &>> /var/log/run.log
         sudo jem service reload
     - cmd[${this.id}]: |-
+        cat /var/lib/pgsql/data/pg_hba.conf
         jcm setPswd ${globals.pswd}
         jcm initSlave ${nodes.sqldb.master.address} &>> /var/log/run.log
-    
+        cat /var/lib/pgsql/data/pg_hba.conf    
   
 startPage: ${nodes.sqldb.master.url}
 success: |
