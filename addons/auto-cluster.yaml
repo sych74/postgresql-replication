@@ -45,7 +45,8 @@ actions:
                 jcm addReplicaHost ${@i.address} &>> /var/log/run.log
                 sudo jem service reload
             - cmd[${@i.id}]: |-
-                jcm updateReplicaHost ${nodes.sqldb.master.address} &>> /var/log/run.log                
+                jcm updateReplicaHost ${nodes.sqldb.master.address} &>> /var/log/run.log
+                jcm updatePrimaryConnInfo &>> /var/log/run.log
     - else: 
       - getPswd
       - forEach(nodes.sqldb):
