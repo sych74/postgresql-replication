@@ -17,6 +17,10 @@ onAfterScaleOut[sqldb]:
         id: ${@i.id}      
         ip: ${@i.address}
 
+onBeforeScaleIn[sqldb]:
+  - forEach(event.response.nodes):
+      cmd[${nodes.sqldb.master.id}]: jcm removeReplicaHost ${@i.address}
+
 onAfterClone:
   - script: delete MANIFEST.id; return {result:0, jps:MANIFEST};
   - install: ${response.jps}
