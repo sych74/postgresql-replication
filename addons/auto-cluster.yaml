@@ -33,26 +33,28 @@ actions:
   init:
     #- env.control.AddContainerEnvVars[sqldb]:
     #    vars: {"KEY_PASS":"${fn.password}"}
-    - forEach(nodes.sqldb):
-        - if (${@i.id} == ${nodes.sqldb.master.id}): 
-            setGlobals:
-              mId: ${@i.id}
-              mIP: ${@i.address}          
-        - else: 
-            setGlobals:
-              sId: ${@i.id}
-              sIP: ${@i.address}          
     - if (${settings.clone:false} || ${this.update:false}):
-          setGlobals:
-            cmd: updateReplicaHost    
-    - cmd[${globals.mId}]: |-
-        jcm ${globals.cmd:initMaster} ${globals.sIP} &>> /var/log/run.log
-        jcm getPswd
-    - setGlobals: 
-        pswd: ${response.out}
-    - cmd[${globals.sId}]: |-
-        jcm setPswd ${globals.pswd}
-        jcm ${globals.cmd:initSlave} ${globals.mIP} &>> /var/log/run.log
+      - cmd[${nodes.sqldb.master.id}]: |-
+          jcm clearReplicaHosts
+      - forEach(nodes.sqldb):
+          - if (${@i.id} != ${nodes.sqldb.master.id}): 
+            - cmd[${nodes.sqldb.master.id}]: |-
+                jcm addReplicaHost ${@i.address} &>> /var/log/run.log
+            - cmd[${@i.id}]: |-
+                jcm updateReplicaHost ${nodes.sqldb.master.address} &>> /var/log/run.log                
+    - else: 
+      - cmd[${nodes.sqldb.master.id}]: |-
+          jcm initMaster &>> /var/log/run.log
+          jcm getPswd
+      - setGlobals: 
+          pswd: ${response.out}    
+      - forEach(nodes.sqldb):
+          - if (${@i.id} != ${nodes.sqldb.master.id}): 
+            - cmd[${nodes.sqldb.master.id}]: |-
+                jcm addReplicaHost ${@i.address} &>> /var/log/run.log
+            - cmd[${@i.id}]: |-
+                jcm setPswd ${globals.pswd}
+                jcm ${globals.cmd:initSlave} ${nodes.sqldb.master.address} &>> /var/log/run.log
 
 startPage: ${nodes.sqldb.master.url}
 success: |
