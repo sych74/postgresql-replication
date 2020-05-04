@@ -10,6 +10,13 @@ nodeGroupAlias:
   
 onInstall: init
 
+onAfterScaleOut[sqldb]:
+  - cmd[${nodes.sqldb.master.id}]: |-
+      jcm getPswd
+  - cmd[${event.response.nodes.join(id,)}]: |-
+      jcm setPswd ${globals.pswd}
+      jcm initSlave ${nodes.sqldb.master.address} &>> /var/log/run.log
+
 onAfterClone:
   - script: delete MANIFEST.id; return {result:0, jps:MANIFEST};
   - install: ${response.jps}
@@ -38,12 +45,12 @@ actions:
     - if (${settings.clone:false} || ${this.update:false}):
           setGlobals:
             cmd: updateReplicaHost    
-    - cmd [${globals.mId}]: |-
+    - cmd[${globals.mId}]: |-
         jcm ${globals.cmd:initMaster} ${globals.sIP} &>> /var/log/run.log
         jcm getPswd
     - setGlobals: 
         pswd: ${response.out}
-    - cmd [${globals.sId}]: |-
+    - cmd[${globals.sId}]: |-
         jcm setPswd ${globals.pswd}
         jcm ${globals.cmd:initSlave} ${globals.mIP} &>> /var/log/run.log
 
