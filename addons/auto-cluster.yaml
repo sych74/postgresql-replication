@@ -11,11 +11,10 @@ nodeGroupAlias:
 onInstall: init
 
 onAfterScaleOut[sqldb]:
-  - cmd[${nodes.sqldb.master.id}]: |-
-      jcm getPswd
-  - cmd[${event.response.nodes.join(id,)}]: |-
-      jcm setPswd ${globals.pswd}
-      jcm initSlave ${nodes.sqldb.master.address} &>> /var/log/run.log
+  - getPswd
+  - forEach(event.response.nodes):
+      initSlave: 
+        ip: ${@i.address}
 
 onAfterClone:
   - script: delete MANIFEST.id; return {result:0, jps:MANIFEST};
@@ -43,20 +42,28 @@ actions:
             - cmd[${@i.id}]: |-
                 jcm updateReplicaHost ${nodes.sqldb.master.address} &>> /var/log/run.log                
     - else: 
-      - cmd[${nodes.sqldb.master.id}]: |-
-          jcm initMaster &>> /var/log/run.log
-          jcm getPswd
-      - setGlobals: 
-          pswd: ${response.out}    
+      - getPswd
       - forEach(nodes.sqldb):
           - if (${@i.id} != ${nodes.sqldb.master.id}): 
-            - cmd[${nodes.sqldb.master.id}]: |-
-                jcm addReplicaHost ${@i.address} &>> /var/log/run.log
-                sudo jem service reload
-            - cmd[${@i.id}]: |-
-                jcm setPswd ${globals.pswd}
-                jcm ${globals.cmd:initSlave} ${nodes.sqldb.master.address} &>> /var/log/run.log
-
+            initSlave: 
+              ip: ${@i.address}
+    
+  getPswd:
+    - cmd[${nodes.sqldb.master.id}]: |-
+        jcm initMaster &>> /var/log/run.log
+        jcm getPswd
+    - setGlobals: 
+        pswd: ${response.out}    
+    
+  initSlave:
+    - cmd[${nodes.sqldb.master.id}]: |-
+        jcm addReplicaHost ${this.ip} &>> /var/log/run.log
+        sudo jem service reload
+    - cmd[${@i.id}]: |-
+        jcm setPswd ${globals.pswd}
+        jcm initSlave ${nodes.sqldb.master.address} &>> /var/log/run.log
+    
+  
 startPage: ${nodes.sqldb.master.url}
 success: |
   **Admin Panel**: [${nodes.sqldb.master.url}](${nodes.sqldb.master.url})  
