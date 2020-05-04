@@ -45,7 +45,7 @@ actions:
     - else: 
       - getPswd
       - forEach(nodes.sqldb):
-          - if (${@i.id} != ${nodes.sqldb.master.id}): 
+          if (${@i.id} != ${nodes.sqldb.master.id}): 
             initSlave: 
               id: ${@i.id}
               ip: ${@i.address}
