@@ -39,6 +39,7 @@ actions:
           - if (${@i.id} != ${nodes.sqldb.master.id}): 
             - cmd[${nodes.sqldb.master.id}]: |-
                 jcm addReplicaHost ${@i.address} &>> /var/log/run.log
+                sudo jem service reload
             - cmd[${@i.id}]: |-
                 jcm updateReplicaHost ${nodes.sqldb.master.address} &>> /var/log/run.log                
     - else: 
@@ -51,6 +52,7 @@ actions:
           - if (${@i.id} != ${nodes.sqldb.master.id}): 
             - cmd[${nodes.sqldb.master.id}]: |-
                 jcm addReplicaHost ${@i.address} &>> /var/log/run.log
+                sudo jem service reload
             - cmd[${@i.id}]: |-
                 jcm setPswd ${globals.pswd}
                 jcm ${globals.cmd:initSlave} ${nodes.sqldb.master.address} &>> /var/log/run.log
