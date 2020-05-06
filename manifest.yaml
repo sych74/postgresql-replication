@@ -31,13 +31,13 @@ settings:
     default: postgres12
 
 nodes:
-  cloudlets: 8
+  cloudlets: 16
   count: 2
+  scalingMode: STATELESS
   nodeType: ${settings.nodeType}
-  env:
-    ON_ENV_INSTALL: ${baseUrl}/addons/auto-cluster.yaml
-
-skipNodeEmails: true
+  password: ${fn.password}  
+  cluster: true
+  skipNodeEmails: true
   
 startPage: ${nodes.sqldb.master.url}
 success: 
