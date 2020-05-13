@@ -8,7 +8,7 @@ description: Test of Master-Slave cluster status
 
 onInstall:
   - cmd[${nodes.sqldb.master.id}]: |-  
-      psql -U webadmin -d postgres -c "select client_addr from pg_stat_replication" | grep rows | cut -d' ' -f1 | cut -d'(' -f2
+      psql -U webadmin -d postgres -c "select client_addr from pg_stat_replication" | grep row | cut -d' ' -f1 | cut -d'(' -f2
   - script: |
       var rows = ${response.out}, slaves = ${nodes.sqldb.length} - 1;
       if (rows == slaves) {
